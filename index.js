@@ -1,36 +1,39 @@
-// - Import express and cors
-
-const express = require("express"); // Used to set up a server
-const cors = require("cors"); // Used to prevent errors when
-// working locally
-
-//  Configure the express server
-
-const app = express(); // Initialize express as an app variable
-app.set("port", process.env.PORT || 6969); // Set the port
-app.use(express.json()); // Enable the server to handle JSON
-
-// requests
-app.use(cors()); // Don't let local development give errors
-
-
-//  Create '/' (home) route
-//  This is where we check URLs and Request methods to create
-// functionality
-
- //  GET '/' is always what will be displayed on the home page of
-// your application
-app.get("/", (req, res) => {
-res.json({ msg: "Welcome" });
+const express = require('express');
+// route
+const route = require('./controller');
+// cors
+const cors = require('cors');
+// port 
+const port = parseInt(process.env.PORT) || 4000;
+// Express app
+const app = express();
+// Middleware
+const {errorHandling} = require('./middleware/ErrorHandling');
+//
+const cookieParser = require('cookie-parser');
+/*
+express.json: setting the content-type to application/json
+bodyParser.urlencoded( {extended: true} ): Object will contain
+values of any type instead of just a string
+*/
+app.use((req, res, next)=> {
+        res.header('Access-Control-Allow-Origin', 'http://localhost:8080')
+        res.header("Access-Control-Allow-Credentials", "true")
+        res.header("Access-Control-Allow-Methods", "*")
+        res.header("Access-Control-Allow-Headers", "*")
+        next();
 });
+app.use(route);
+app.use(
+    cors(),
+    cookieParser(),
+    express.json,
+    express.urlencoded({extended: false})
+)
 
-
-//  Set up app listening for API calls
-
-app.listen(app.get("port"), () => {
-console.log(`Listening for calls on port ${app.get("port")}`);
-console.log("Press Ctrl+C to exit server");
+// Server is running
+app.listen(port, ()=> {
+    console.log(`Server is running`)
 });
-
-
-
+// Handling all errors
+app.use(errorHandling);
