@@ -15,7 +15,7 @@ function createToken(user) {
 //
 function verifyAToken(req, res, next) {
     try{
-        const token = req.cookies["LegitUser"] !== null ? req.cookies["LegitUser"] : 
+        const token = req.cookies["LegitUser"] !== null ? req.cookies["LegitUser"] :
         "Please register" ;
         const isValid = null;
         if(token !== "Please register") {
